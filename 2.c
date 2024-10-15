@@ -1,52 +1,50 @@
 #include <stdio.h>
 
-int isMajority(int *array, int start, int end, int arrayLength)
-{
-    int length = end - start + 1;
-    int majority = length / 2;
-    int frequency[arrayLength][2];
-    frequency[0][0] = array[0];
-    int index = 0;
-    for (int i = start - 1; i < end; i++)
-    {
-        if (array[i] == frequency[index][0])
-        {
-            frequency[index][1]++;
-        }
-        else if (array[i] > frequency[index][0])
-        {
-            index++;
-            frequency[index][0] = array[i];
-            frequency[index][1] = 1;
+int findCandidate(int arr[], int start, int end) {
+    int maj_index = start;
+    int count = 1;
+    for (int i = start + 1; i <= end; i++) {
+        if (arr[maj_index] == arr[i])
+            count++;
+        else
+            count--;
+        if (count == 0) {
+            maj_index = i;
+            count = 1;
         }
     }
-    for (int i = 0; i <= index; i++)
-    {
-        if (frequency[i][1] > majority)
-        {
-            return frequency[i][0];
-        }
-    }
+    return arr[maj_index];
+}
+
+int isMajority(int arr[], int start, int end, int cand) {
+    int count = 0;
+    for (int i = start; i <= end; i++)
+        if (arr[i] == cand)
+            count++;
+    if (count > (end - start + 1) / 2)
+        return cand;
     return 0;
 }
 
-int main()
-{
-    int length, query;
-    scanf("%d %d", &length, &query);
-    int array[length];
-    for (int i = 0; i < length; i++)
-    {
-        scanf("%d", array + i);
+int findMajority(int arr[], int start, int end) {
+    int candidate = findCandidate(arr, start - 1, end - 1);
+    return isMajority(arr, start - 1, end - 1, candidate);
+}
+
+int main() {
+    int n, q;
+    scanf("%d %d", &n, &q);
+    
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
     }
-    int queries[query][2];
-    for (int i = 0; i < query; i++)
-    {
-        scanf("%d %d", *(queries + i), *(queries + i) + 1);
+    
+    for (int i = 0; i < q; i++) {
+        int l, r;
+        scanf("%d %d", &l, &r);
+        printf("%d\n", findMajority(arr, l, r));
     }
-    for (int i = 0; i < query; i++)
-    {
-        printf("%d\n", isMajority(array, queries[i][0], queries[i][1], length));
-    }
+    
     return 0;
 }
