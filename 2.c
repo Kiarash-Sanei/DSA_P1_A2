@@ -1,50 +1,79 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int findCandidate(int arr[], int start, int end) {
-    int maj_index = start;
-    int count = 1;
-    for (int i = start + 1; i <= end; i++) {
-        if (arr[maj_index] == arr[i])
-            count++;
-        else
-            count--;
-        if (count == 0) {
-            maj_index = i;
-            count = 1;
-        }
-    }
-    return arr[maj_index];
-}
+struct LinkableInteger
+{
+    int value;
+    struct LinkableInteger *next;
+} typedef LI;
 
-int isMajority(int arr[], int start, int end, int cand) {
-    int count = 0;
-    for (int i = start; i <= end; i++)
-        if (arr[i] == cand)
-            count++;
-    if (count > (end - start + 1) / 2)
-        return cand;
-    return 0;
-}
-
-int findMajority(int arr[], int start, int end) {
-    int candidate = findCandidate(arr, start - 1, end - 1);
-    return isMajority(arr, start - 1, end - 1, candidate);
-}
-
-int main() {
+int main()
+{
     int n, q;
     scanf("%d %d", &n, &q);
-    
-    int arr[n];
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &arr[i]);
+
+    LI list[n];
+    for (int i = 0; i < n; i++)
+    {
+        list[i].next = NULL;
+        list[i].value = -1;
     }
-    
-    for (int i = 0; i < q; i++) {
+
+    int arr[n];
+    int input;
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d", &input);
+        arr[i] = input;
+        LI* entry = list + input - 1;
+        while (entry->next != NULL)
+        {
+            entry = entry->next;
+        }
+        LI *newEntry = (LI *)malloc(sizeof(LI));
+        entry->next = newEntry;
+        entry->value = i;
+        newEntry->next = NULL;
+        newEntry->value = -1;
+    }
+
+    for (int i = 0; i < q; i++)
+    {
         int l, r;
         scanf("%d %d", &l, &r);
-        printf("%d\n", findMajority(arr, l, r));
+        int flag = 0;
+        int range = r - l + 1;
+        l--;
+        r--;
+
+        for (int j = 0; j < 30; j++)
+        {
+            int random = (rand() % range) + l;
+            int candidate = arr[random];
+
+            int count = 0;
+            LI entry = list[candidate - 1];
+            while (entry.next != NULL)
+            {
+                if (entry.value >= l)
+                {
+                    if (entry.value > r)
+                    {
+                        break;
+                    }
+                    count++;
+                }
+                entry = *entry.next;
+            }
+
+            if (count > range / 2)
+            {
+                flag = candidate;
+                break;
+            }
+        }
+        printf("%d\n", flag);
     }
-    
+
     return 0;
 }

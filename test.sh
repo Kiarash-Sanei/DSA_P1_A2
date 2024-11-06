@@ -1,5 +1,6 @@
 #!/bin/bash
 
+gcc 2.c -o 2.out -lm
 start=$(date +%s%N)
 cat input.txt | ./2.out
 end=$(date +%s%N)
